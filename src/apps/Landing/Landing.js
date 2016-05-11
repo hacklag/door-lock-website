@@ -1,9 +1,6 @@
 import React from 'react';
 import Radium from 'radium';
 import LeftBar from './LeftBar';
-import Declined from './LandingDeclined';
-import Success from './LandingSuccess';
-import Loading from './LandingLoading';
 import TopBar from './TopBar';
 import Syncano from 'syncano';
 
@@ -11,22 +8,23 @@ export default Radium(React.createClass({
 
   getInitialState() {
     return {
-      status: null
+      message: null
     };
   },
 
   componentWillMount() {
-    const connection = Syncano({accountKey: 'API_KEY'});
+    const connection = Syncano({accountKey: 'api-key'});
     const Channel = connection.Channel;
     const query = {
-      name: 'CHANNEL_NAME',
-      instanceName: 'INSTANCE_NAME'
+      name: 'channel-name',
+      instanceName: 'instance-name'
     };
     const poll = Channel.please().poll(query);
 
     poll.on('update', (data) => {
+      console.log(data.payload);
       this.setState({
-        status: data.payload.status
+        message: data.payload.message
       });
     });
 
@@ -65,31 +63,18 @@ export default Radium(React.createClass({
 
   contentForm() {
     const styles = this.getStyles();
+    let message = this.state.message;
 
+    if (!message) message = 'Hello Stranger';
     return (
       <div style={styles.content}>
         <div style={styles.mainTextContainer}>
           <div style={styles.headerText}>
-            <span style={styles.semiBold}>Hello Stranger</span>
+            <span style={styles.semiBold}>{message}</span>
           </div>
         </div>
       </div>
     );
-  },
-
-  renderContent() {
-    const {status} = this.state;
-
-    if (status === 'loading') {
-      return <Loading/>;
-    }
-    if (status === 'permission') {
-      return <Success/>;
-    }
-    if (status === 'no permission') {
-      return <Declined/>;
-    }
-    return this.contentForm();
   },
 
   render() {
@@ -100,7 +85,7 @@ export default Radium(React.createClass({
         <TopBar logo="hackbat_general.svg" />
         <LeftBar logo="hackbat_general.svg" />
         <div style={styles.contentBar}>
-          {this.renderContent()}
+          {this.contentForm()}
         </div>
       </div>
     );
