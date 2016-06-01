@@ -4,14 +4,14 @@ import LeftBar from './LeftBar';
 import Syncano from 'syncano';
 import {CircularProgress} from 'material-ui';
 
-const connection = Syncano({accountKey: 'api_key'});
+const connection = Syncano({accountKey: SYNCANO_API_KEY});
 const Channel = connection.Channel;
 const params = {
-  name: 'channel_name',
-  instanceName: 'instance_name'
+  name: SYNCANO_CHANNEL_NAME,
+  instanceName: SYNCANO_INSTANCE_NAME
 };
 const query = {
-  room: 'room_name'
+  room: SYNCANO_CHANNEL_ROOM_NAME
 };
 
 export default Radium(React.createClass({
