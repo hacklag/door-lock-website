@@ -10,13 +10,11 @@
   },
   "dependencies": {
     "material-ui": "0.15.0-alpha.2",
-    "lodash": "^4.6.1",
     "normalize.css": "3.0.3",
     "radium": "^0.15.3",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "react-router": "2.0.1",
-    "react-tap-event-plugin": "0.2.2",
     "syncano": "^1.0.0"
   },
   "devDependencies": {
@@ -72,7 +70,6 @@
     "iconfont": "gulp iconfont",
     "add-github-tag": "gulp add-github-tag",
     "check-github-tag": "gulp check-github-tag",
-    "changelog": "gulp changelog",
     "s3-cleanup": "gulp s3-cleanup",
     "deployment-master": "gulp deployment-master",
     "deployment-devel": "gulp deployment-devel",
