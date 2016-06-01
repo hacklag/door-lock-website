@@ -4,32 +4,30 @@ import LeftBar from './LeftBar';
 import Syncano from 'syncano';
 import {CircularProgress} from 'material-ui';
 
-export default Radium(React.createClass({
+const connection = Syncano({accountKey: 'api_key'});
+const Channel = connection.Channel;
+const params = {
+  name: 'channel_name',
+  instanceName: 'instance_name'
+};
+const query = {
+  room: 'room_name'
+};
 
+export default Radium(React.createClass({
   getInitialState() {
     return {
-      message: 'Hello Stranger',
       status: 'waiting'
     };
   },
 
   componentWillMount() {
-    const connection = Syncano({accountKey: 'api_key'});
-    const Channel = connection.Channel;
-    const params = {
-      name: 'channel_name',
-      instanceName: 'instance_name'
-    };
-    const query = {
-      room: 'room_name'
-    };
     const poll = Channel.please().poll(params, query);
 
     poll.on('update', (data) => {
-      const {message, status} = data.payload;
+      const {status} = data.payload;
 
       this.setState({
-        message,
         status
       });
     });
@@ -82,14 +80,23 @@ export default Radium(React.createClass({
 
   contentForm() {
     const styles = this.getStyles();
+    const {status} = this.state;
     let style = styles.deniedMessage;
-    const {message, status} = this.state;
+    let message = '';
 
-    if (status === 'granted' || status === 'waiting') style = styles.message;
+    if (status === 'granted') {
+      style = styles.message;
+      message = 'Access Granted';
+    } else if (status === 'waiting') {
+      style = styles.message;
+      message = 'Hello Stranger';
+    } else if (status === 'nopermission') {
+      message = 'No rights';
+    }
     return (
       <div>
         {
-          status === 'loading' || message === 'Loading'
+          status === 'loading'
           ? (<CircularProgress color="black" />)
           : (<span style={style}>{message}</span>)
         }
