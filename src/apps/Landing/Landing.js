@@ -14,14 +14,14 @@ export default Radium(React.createClass({
   },
 
   componentWillMount() {
-    const connection = Syncano({accountKey: 'd43d05d57de2601f5b9a6d798fdef97320b9a0de'});
+    const connection = Syncano({accountKey: 'api_key'});
     const Channel = connection.Channel;
     const params = {
-      name: 'door_informations',
-      instanceName: 'muddy-paper-3302'
+      name: 'channel_name',
+      instanceName: 'instance_name'
     };
     const query = {
-      room: '2'
+      room: 'room_name'
     };
     const poll = Channel.please().poll(params, query);
 
