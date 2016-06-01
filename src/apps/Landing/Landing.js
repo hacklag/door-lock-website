@@ -26,7 +26,7 @@ export default Radium(React.createClass({
     const poll = Channel.please().poll(params, query);
 
     poll.on('update', (data) => {
-      let {message, status} = data.payload;
+      const {message, status} = data.payload;
 
       this.setState({
         message,
@@ -83,11 +83,9 @@ export default Radium(React.createClass({
   contentForm() {
     const styles = this.getStyles();
     let style = styles.deniedMessage;
-    let {message, status} = this.state;
+    const {message, status} = this.state;
 
     if (status === 'granted' || status === 'waiting') style = styles.message;
-    console.log(status);
-    console.log(status === 'loading');
     return (
       <div>
         {
