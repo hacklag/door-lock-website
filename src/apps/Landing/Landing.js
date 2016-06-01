@@ -1,47 +1,45 @@
 import React from 'react';
 import Radium from 'radium';
 import LeftBar from './LeftBar';
-import TopBar from './TopBar';
 import Syncano from 'syncano';
+import {CircularProgress} from 'material-ui';
 
 export default Radium(React.createClass({
 
   getInitialState() {
     return {
       message: null,
-      loading: false
+      loading: false,
+      status: 'waiting'
     };
   },
 
   componentWillMount() {
-    const connection = Syncano({accountKey: 'accoutKey'});
+    const connection = Syncano({accountKey: 'api_key'});
     const Channel = connection.Channel;
-    const query = {
-      name: 'channelName',
-      instanceName: 'instanceName'
+    const params = {
+      name: 'channel_name',
+      instanceName: 'instance_name'
     };
-    const poll = Channel.please().poll(query);
+    const query = {
+      room: 'room_name'
+    };
+    const poll = Channel.please().poll(params, query);
 
     poll.on('update', (data) => {
-      let loadingVar = false;
+      let loading = false;
+      let {message, status} = data.payload;
 
-      if (data.payload.status === 'loading') {
-        loadingVar = true;
-      }
-      console.log(data.payload);
+      if (status === 'loading' || !status) loading = true;
       this.setState({
-        message: data.payload.message,
-        loading: loadingVar
+        message,
+        loading,
+        status
       });
     });
 
     poll.start();
   },
-
-  componentDidMount() {
-    window.analytics.page();
-  },
-
 
   getStyles() {
     return {
@@ -59,7 +57,8 @@ export default Radium(React.createClass({
       },
       contentBar: {
         marginLeft: 72,
-        marginTop: 40,
+        marginTop: 'auto',
+        marginBottom: 'auto',
         '@media (max-width: 750px)': {
           marginLeft: 'auto',
           marginRight: 'auto',
@@ -74,29 +73,31 @@ export default Radium(React.createClass({
         top: '50%',
         left: '50%',
         margin: '-50px 0px 0px -50px'
+      },
+      message: {
+        fontSize: 48
+      },
+      deniedMessage: {
+        fontSize: 48,
+        color: 'red'
       }
     };
   },
 
   contentForm() {
     const styles = this.getStyles();
-    const loading = this.state.loading;
-    let message = this.state.message;
+    let style = styles.deniedMessage;
+    let {message, status, loading} = this.state;
 
+    if (status === 'granted' || status === 'waiting') style = styles.message;
     if (!message) message = 'Hello Stranger';
     return (
       <div>
-        <div style={styles.content}>
-          <div style={styles.mainTextContainer}>
-            <div style={styles.headerText}>
-              {
-                loading
-                ? (<img src={'/img/loader.gif'} />)
-                : (<span style={styles.semiBold}>{message}</span>)
-              }
-            </div>
-          </div>
-        </div>
+        {
+          loading
+          ? (<CircularProgress color="black" />)
+          : (<span style={style}>{message}</span>)
+        }
       </div>
     );
   },
@@ -106,7 +107,6 @@ export default Radium(React.createClass({
 
     return (
       <div style={styles.componentBody}>
-        <TopBar logo="hackbat_general.svg" />
         <LeftBar logo="hackbat_general.svg" />
         <div style={styles.contentBar}>
           {this.contentForm()}
