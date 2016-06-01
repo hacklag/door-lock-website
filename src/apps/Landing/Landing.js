@@ -8,32 +8,28 @@ export default Radium(React.createClass({
 
   getInitialState() {
     return {
-      message: null,
-      loading: false,
+      message: 'Hello Stranger',
       status: 'waiting'
     };
   },
 
   componentWillMount() {
-    const connection = Syncano({accountKey: 'api_key'});
+    const connection = Syncano({accountKey: 'd43d05d57de2601f5b9a6d798fdef97320b9a0de'});
     const Channel = connection.Channel;
     const params = {
-      name: 'channel_name',
-      instanceName: 'instance_name'
+      name: 'door_informations',
+      instanceName: 'muddy-paper-3302'
     };
     const query = {
-      room: 'room_name'
+      room: '2'
     };
     const poll = Channel.please().poll(params, query);
 
     poll.on('update', (data) => {
-      let loading = false;
       let {message, status} = data.payload;
 
-      if (status === 'loading' || !status) loading = true;
       this.setState({
         message,
-        loading,
         status
       });
     });
@@ -87,14 +83,15 @@ export default Radium(React.createClass({
   contentForm() {
     const styles = this.getStyles();
     let style = styles.deniedMessage;
-    let {message, status, loading} = this.state;
+    let {message, status} = this.state;
 
     if (status === 'granted' || status === 'waiting') style = styles.message;
-    if (!message) message = 'Hello Stranger';
+    console.log(status);
+    console.log(status === 'loading');
     return (
       <div>
         {
-          loading
+          status === 'loading' || message === 'Loading'
           ? (<CircularProgress color="black" />)
           : (<span style={style}>{message}</span>)
         }
