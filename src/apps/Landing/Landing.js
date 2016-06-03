@@ -74,6 +74,12 @@ export default Radium(React.createClass({
       deniedMessage: {
         fontSize: 48,
         color: 'red'
+      },
+      information: {
+        width: 350
+      },
+      circularProgressStyle: {
+        marginLeft: '40%'
       }
     };
   },
@@ -94,10 +100,10 @@ export default Radium(React.createClass({
       message = 'No rights';
     }
     return (
-      <div>
+      <div style={styles.information}>
         {
           status === 'loading'
-          ? (<CircularProgress color="black" />)
+          ? (<CircularProgress style={styles.circularProgressStyle} color="black" />)
           : (<span style={style}>{message}</span>)
         }
       </div>
