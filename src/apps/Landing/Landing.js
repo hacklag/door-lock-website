@@ -14,19 +14,25 @@ const query = {
   room: SYNCANO_CHANNEL_ROOM_NAME
 };
 
+// status 0 - 'loading',
+// status 1 - 'door_closed',
+// status 2 - 'access_denied',
+// status 3 - 'access_granted',
+// status 4 - 'door_is_open',
+// status 5 - 'door_is_open_alers'
+
 const STATUS_TABLE = [
-  'door_closed',
-  'loading',
-  'access_denied',
-  'access_granted',
-  'door_is_open',
-  'door_is_open_alers'
+  'Hello World',
+  'Access Denied',
+  'Access Granted',
+  'Welcome in Hacklag',
+  'Close the door!'
 ];
 
 export default Radium(React.createClass({
   getInitialState() {
     return {
-      status: 0
+      status: 1
     };
   },
 
@@ -37,7 +43,7 @@ export default Radium(React.createClass({
       const {status} = data.payload;
 
       this.setState({
-        status: parseInt(status, 10)
+        status
       });
     });
 
@@ -74,6 +80,10 @@ export default Radium(React.createClass({
       message: {
         fontSize: 48
       },
+      acceptMessage: {
+        fontSize: 48,
+        color: 'green'
+      },
       deniedMessage: {
         fontSize: 48,
         color: 'red'
@@ -84,16 +94,25 @@ export default Radium(React.createClass({
     };
   },
 
+  messageStyle(status) {
+    const {message, deniedMessage, acceptMessage} = this.getStyles();
+
+    if (status === 2 || status === 5) {
+      return deniedMessage;
+    } else if (status === 3) {
+      return acceptMessage;
+    }
+    return message;
+  },
+
   contentForm() {
-    const {message, deniedMessage, circularProgressStyle} = this.getStyles();
+    const {circularProgressStyle} = this.getStyles();
     const {status} = this.state;
 
-    if (status === 1) {
+    if (status === 0) {
       return (<CircularProgress style={circularProgressStyle} color="black" />);
-    } else if (status === 2 || status === 5) {
-      return (<span style={deniedMessage}>{STATUS_TABLE[status]}</span>);
     }
-    return (<span style={message}>{STATUS_TABLE[status]}</span>);
+    return (<span style={this.messageStyle(status)}>{STATUS_TABLE[status - 1]}</span>);
   },
 
   render() {
