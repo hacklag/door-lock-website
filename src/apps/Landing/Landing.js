@@ -4,20 +4,29 @@ import LeftBar from './LeftBar';
 import Syncano from 'syncano';
 import {CircularProgress} from 'material-ui';
 
-const connection = Syncano({accountKey: SYNCANO_API_KEY});
+const connection = Syncano({accountKey: '6f989ca9d095880e5eef79396c5f71c9b09606ec'});
 const Channel = connection.Channel;
 const params = {
-  name: SYNCANO_CHANNEL_NAME,
-  instanceName: SYNCANO_INSTANCE_NAME
+  name: 'door_informations',
+  instanceName: 'muddy-paper-3302'
 };
 const query = {
-  room: SYNCANO_CHANNEL_ROOM_NAME
+  room: '2'
 };
+
+const STATUS_TABLE = [
+  'door_closed',
+  'loading',
+  'access_denied',
+  'access_granted',
+  'door_is_open',
+  'door_is_open_alers'
+];
 
 export default Radium(React.createClass({
   getInitialState() {
     return {
-      status: 'waiting'
+      status: 0
     };
   },
 
@@ -28,7 +37,7 @@ export default Radium(React.createClass({
       const {status} = data.payload;
 
       this.setState({
-        status
+        status: parseInt(status, 10)
       });
     });
 
@@ -85,29 +94,15 @@ export default Radium(React.createClass({
   },
 
   contentForm() {
-    const styles = this.getStyles();
+    const {message, deniedMessage, circularProgressStyle} = this.getStyles();
     const {status} = this.state;
-    let style = styles.deniedMessage;
-    let message = '';
 
-    if (status === 'granted') {
-      style = styles.message;
-      message = 'Access Granted';
-    } else if (status === 'waiting') {
-      style = styles.message;
-      message = 'Hello Stranger';
-    } else if (status === 'nopermission') {
-      message = 'No rights';
+    if (status === 1) {
+      return (<CircularProgress style={circularProgressStyle} color="black" />);
+    } else if (status === 2 || status === 5) {
+      return (<span style={deniedMessage}>{STATUS_TABLE[status]}</span>);
     }
-    return (
-      <div style={styles.information}>
-        {
-          status === 'loading'
-          ? (<CircularProgress style={styles.circularProgressStyle} color="black" />)
-          : (<span style={style}>{message}</span>)
-        }
-      </div>
-    );
+    return (<span style={message}>{STATUS_TABLE[status]}</span>);
   },
 
   render() {
@@ -117,7 +112,9 @@ export default Radium(React.createClass({
       <div style={styles.componentBody}>
         <LeftBar logo="hackbat_general.svg" />
         <div style={styles.contentBar}>
-          {this.contentForm()}
+          <div style={styles.information}>
+            {this.contentForm()}
+          </div>
         </div>
       </div>
     );
