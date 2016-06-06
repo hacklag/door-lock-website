@@ -4,14 +4,14 @@ import LeftBar from './LeftBar';
 import Syncano from 'syncano';
 import {CircularProgress} from 'material-ui';
 
-const connection = Syncano({accountKey: '6f989ca9d095880e5eef79396c5f71c9b09606ec'});
+const connection = Syncano({accountKey: SYNCANO_API_KEY});
 const Channel = connection.Channel;
 const params = {
-  name: 'door_informations',
-  instanceName: 'muddy-paper-3302'
+  name: SYNCANO_CHANNEL_NAME,
+  instanceName: SYNCANO_INSTANCE_NAME
 };
 const query = {
-  room: '2'
+  room: SYNCANO_CHANNEL_ROOM_NAME
 };
 
 const STATUS_TABLE = [
