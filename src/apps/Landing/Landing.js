@@ -68,14 +68,8 @@ export default Radium(React.createClass({
           padding: '0px 16px 16px 16px'
         }
       },
-      fullScreenComponent: {
-        position: 'relative'
-      },
-      centerLoader: {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        margin: '-50px 0px 0px -50px'
+      information: {
+        width: 350
       },
       message: {
         fontSize: 48
@@ -83,9 +77,6 @@ export default Radium(React.createClass({
       deniedMessage: {
         fontSize: 48,
         color: 'red'
-      },
-      information: {
-        width: 350
       },
       circularProgressStyle: {
         marginLeft: '40%'
