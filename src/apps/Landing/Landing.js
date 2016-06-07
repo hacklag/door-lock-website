@@ -5,13 +5,18 @@ import Syncano from 'syncano';
 import {CircularProgress} from 'material-ui';
 
 const connection = Syncano({accountKey: SYNCANO_API_KEY});
-const Channel = connection.Channel;
+const {Channel, DataObject} = connection;
 const params = {
   name: SYNCANO_CHANNEL_NAME,
   instanceName: SYNCANO_INSTANCE_NAME
 };
 const query = {
   room: SYNCANO_CHANNEL_ROOM_NAME
+};
+const doorQuery = {
+  id: SYNCANO_DOOR_ID,
+  instanceName: SYNCANO_INSTANCE_NAME,
+  className: SYNCANO_CLASS_NAME
 };
 
 // status 0 - 'loading',
@@ -22,6 +27,7 @@ const query = {
 // status 5 - 'door_is_open_alers'
 
 const STATUS_TABLE = [
+  'Loading',
   'Hello World',
   'Access Denied',
   'Access Granted',
@@ -32,11 +38,17 @@ const STATUS_TABLE = [
 export default Radium(React.createClass({
   getInitialState() {
     return {
-      status: 1
+      status: 0
     };
   },
 
   componentWillMount() {
+    DataObject.please().get(doorQuery).then((object) => {
+      this.setState({
+        status: object.status
+      });
+    });
+
     const poll = Channel.please().poll(params, query);
 
     poll.on('update', (data) => {
@@ -75,17 +87,16 @@ export default Radium(React.createClass({
         }
       },
       information: {
+        fontSize: 48,
         width: 350
       },
-      message: {
-        fontSize: 48
+      normalMessage: {
+        color: '#4A4A4A'
       },
       acceptMessage: {
-        fontSize: 48,
         color: 'green'
       },
-      deniedMessage: {
-        fontSize: 48,
+      errorMessage: {
         color: 'red'
       },
       circularProgressStyle: {
@@ -95,14 +106,14 @@ export default Radium(React.createClass({
   },
 
   messageStyle(status) {
-    const {message, deniedMessage, acceptMessage} = this.getStyles();
+    const {normalMessage, errorMessage, acceptMessage} = this.getStyles();
 
     if (status === 2 || status === 5) {
-      return deniedMessage;
+      return errorMessage;
     } else if (status === 3) {
       return acceptMessage;
     }
-    return message;
+    return normalMessage;
   },
 
   contentForm() {
@@ -112,7 +123,7 @@ export default Radium(React.createClass({
     if (status === 0) {
       return (<CircularProgress style={circularProgressStyle} color="black" />);
     }
-    return (<span style={this.messageStyle(status)}>{STATUS_TABLE[status - 1]}</span>);
+    return (<span style={this.messageStyle(status)}>{STATUS_TABLE[status]}</span>);
   },
 
   render() {

@@ -23,6 +23,8 @@
     "VERSION": true,
     "SYNCANO_API_KEY": true,
     "SYNCANO_INSTANCE_NAME": true,
+    "SYNCANO_CLASS_NAME": true,
+    "SYNCANO_DOOR_ID": true,
     "SYNCANO_CHANNEL_NAME": true,
     "SYNCANO_CHANNEL_ROOM_NAME": true
   },
